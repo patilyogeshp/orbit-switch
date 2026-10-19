@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#090d1c"><meta name="description" content="Orbit Switch — a tiny one-touch arcade challenge. Switch orbits, dodge gates, collect sparks."><title>Orbit Switch — One More Orbit</title>
+<style>
+:root{color-scheme:dark;--bg:#090d1c;--panel:#121a30;--muted:#9aa8c7;--cyan:#55e7ff;--pink:#ff5ebc;--gold:#ffd166}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#172344 0%,var(--bg) 65%);font-family:ui-rounded,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f5f7ff;touch-action:manipulation}body{display:flex;align-items:center;justify-content:center}.app{width:min(100vw,560px);height:100dvh;max-height:920px;position:relative;display:flex;flex-direction:column;padding:max(16px,env(safe-area-inset-top)) 18px max(14px,env(safe-area-inset-bottom));gap:10px}.top{display:flex;align-items:center;justify-content:space-between;z-index:2}.brand{font-size:12px;font-weight:900;letter-spacing:.2em;color:var(--cyan)}.tag{font-size:11px;color:var(--muted);border:1px solid #2b3758;border-radius:99px;padding:6px 10px}.stats{display:flex;justify-content:center;gap:38px;z-index:2}.stat{text-align:center}.stat .num{font-size:clamp(25px,6vw,34px);font-weight:850;line-height:1.1;letter-spacing:-.04em}.stat .label{font-size:10px;letter-spacing:.16em;color:var(--muted);margin-top:4px}.arena{position:relative;flex:1;min-height:240px;max-height:650px;border:1px solid #263252;border-radius:28px;overflow:hidden;background:radial-gradient(circle at 50% 45%,#172747 0%,#0c1429 60%,#0a1021 100%);box-shadow:0 20px 60px #0005,inset 0 0 60px #0b1732}.arena:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(135deg,#ffffff08,transparent 35%,#55e7ff04)}canvas{width:100%;height:100%;display:block}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:#070b18a8;backdrop-filter:blur(7px);z-index:3}.overlay.hidden{display:none}.modal{max-width:310px}.eyebrow{font-size:10px;letter-spacing:.22em;font-weight:800;color:var(--cyan);margin-bottom:10px}.modal h1{font-size:clamp(32px,9vw,48px);letter-spacing:-.06em;line-height:.98;margin:0 0 14px}.modal p{color:#b7c3df;font-size:14px;line-height:1.55;margin:0 0 20px}.btn{appearance:none;border:0;border-radius:14px;background:linear-gradient(135deg,#55e7ff,#7c9dff);color:#08101e;font-weight:900;font-size:15px;padding:14px 24px;min-width:170px;box-shadow:0 7px 24px #55e7ff35;cursor:pointer}.btn:active{transform:scale(.98)}.hint{font-size:11px!important;color:#8999bc!important;margin-top:14px!important;margin-bottom:0!important}.bottom{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px;padding:2px 3px;z-index:2}.tap-hint{color:#d8e5ff;font-weight:700;letter-spacing:.04em}.sound{background:transparent;color:var(--muted);border:1px solid #2b3758;border-radius:99px;padding:6px 10px;font:inherit;cursor:pointer}.actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}.btn.secondary{background:#202c49;color:#eaf1ff;border:1px solid #3a4a70;box-shadow:none;min-width:120px;padding:11px 14px;font-size:13px}.result-chip{display:inline-flex;gap:6px;align-items:center;padding:7px 10px;border-radius:99px;background:#1b2947;border:1px solid #334466;color:#d9e7ff;font-size:11px;margin:0 0 14px}.daily-note{color:#9aafd9;font-size:11px;margin-top:8px}.pulse{animation:pulse 1.8s infinite}@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}@media(min-width:560px){.app{height:min(100dvh,900px);padding-top:22px;padding-bottom:20px}.arena{border-radius:32px}}@media(prefers-reduced-motion:reduce){.pulse{animation:none}}
+</style></head><body><main class="app"><header class="top"><div class="brand">◉ ORBIT SWITCH</div><div class="tag" id="modeTag">DAILY CHALLENGE · <span id="dayCode">001</span></div></header><section class="stats"><div class="stat"><div class="num" id="score">0</div><div class="label">SCORE</div></div><div class="stat"><div class="num" id="best">0</div><div class="label">PERSONAL BEST</div></div><div class="stat"><div class="num" id="sparks">0</div><div class="label">SPARKS</div></div></section><section class="arena" id="arena"><canvas id="game" aria-label="Orbit Switch game area"></canvas><div class="overlay" id="overlay"><div class="modal"><div class="eyebrow">A ONE-TOUCH ARCADE GAME</div><h1 id="headline">One more<br>orbit.</h1><p id="message">Tap to switch between the inner and outer orbit. Dodge the gates. Collect sparks. How long can you last?</p><div class="result-chip" id="resultChip">TODAY’S CHALLENGE</div><button class="btn" id="playBtn">PLAY TODAY’S RUN</button><div class="actions"><button class="btn secondary" id="practiceBtn">PRACTICE MODE</button><button class="btn secondary" id="shareBtn" style="display:none">SHARE RESULT</button></div><p class="daily-note" id="dailyNote">Same daily seed for everyone · one best score to beat</p><p class="hint">TAP TO SWITCH · OR PRESS SPACE</p></div></div></section><footer class="bottom"><span class="tap-hint pulse" id="bottomHint">TAP TO SWITCH ORBITS</span><button class="sound" id="soundBtn" aria-label="Toggle sound">SOUND: OFF</button></footer></main>
+<script>
+// PostHog browser analytics. Replace the project token below with the public Project API key
+// from your PostHog project settings. This is a client-side project token, not a personal API key.
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},n="init capture identify alias people.set people.set_once people.unset people.increment people.append people.remove people.clear opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing get_distinct_id get_session_id get_session_replay_url startSessionRecording stopSessionRecording sessionRecordingStarted captureException on off register register_once unregister getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags group resetGroups setPersonProperties setPersonPropertiesForFlags reset getGroups getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey get_property getSessionProperty get_session_id get_session_replay_url".split(" "),o=0;o<n.length;o++)g(u,n[o]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+window.posthog.init('YOUR_POSTHOG_PROJECT_TOKEN', {
+  api_host: 'YOUR_POSTHOG_API_HOST',
+  defaults: '2026-05-30',
+  autocapture: false,
+  capture_pageview: false,
+  disable_session_recording: true
+});
+window.orbitTrack = function(payload) {
+  if (!payload || !payload.event || !window.posthog) return;
+  window.posthog.capture(payload.event, payload.props || {});
+};
+</script>
+<script>
+(()=>{'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),arena=document.getElementById('arena');
+const $=id=>document.getElementById(id);
+let W=0,H=0,dpr=1,cx=0,cy=0,r1=80,r2=130,angle=-Math.PI/2,lane=0,score=0,sparks=0,best=Number(localStorage.getItem('orbitSwitchBest')||0),running=false,dead=false,last=0,elapsed=0,spawnAt=1.2,objects=[],particles=[],sound=false,audioCtx=null,shake=0,mode='daily',rng=Math.random,runStart=0,runNumber=0;
+const TAU=Math.PI*2,nowDate=()=>new Date(),dateKey=(d=nowDate())=>d.toISOString().slice(0,10);
+const today=dateKey(),daySeed=hashString('orbit-switch-daily-'+today);
+$('dayCode').textContent=today.replaceAll('-','').slice(-4);
+$('best').textContent=best;
+function hashString(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function seeded(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+function track(event,props={}){ // Optional analytics hook; no data is sent unless configured below.
+  const payload={event,props:{...props,mode,day:today,at:new Date().toISOString()}};
+  window.orbitTrack?.(payload);
+  if(window.ORBIT_DEBUG_ANALYTICS) console.info('[Orbit analytics]',payload);
+}
+function resize(){const rect=arena.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=rect.width;H=rect.height;canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);cx=W/2;cy=H/2;r1=Math.min(W,H)*.235;r2=Math.min(W,H)*.355;draw()}
+new ResizeObserver(resize).observe(arena);
+function start(nextMode=mode){
+ mode=nextMode;rng=mode==='daily'?seeded(daySeed):Math.random;
+ angle=-Math.PI/2;lane=0;score=0;sparks=0;elapsed=0;spawnAt=1.1;objects=[];particles=[];shake=0;running=true;dead=false;last=performance.now();runStart=Date.now();runNumber++;
+ $('score').textContent='0';$('sparks').textContent='0';$('overlay').classList.add('hidden');
+ $('modeTag').innerHTML=(mode==='daily'?'DAILY CHALLENGE':'PRACTICE MODE')+' · <span>'+today.replaceAll('-','').slice(-4)+'</span>';
+ $('bottomHint').textContent='TAP TO SWITCH ORBITS';$('shareBtn').style.display='none';
+ track('game_start',{run_number:runNumber,seed:mode==='daily'?daySeed:null});
+ requestAnimationFrame(loop);beep(520,.05)
+}
+function finish(){
+ running=false;dead=true;best=Math.max(best,score);localStorage.setItem('orbitSwitchBest',String(best));$('best').textContent=best;
+ const duration=Math.round((Date.now()-runStart)/1000);
+ const savedDay=localStorage.getItem('orbitSwitchLastDaily'),oldStreak=Number(localStorage.getItem('orbitSwitchStreak')||0);
+ let streak=oldStreak;
+ if(mode==='daily'&&savedDay!==today){
+   const yesterday=new Date();yesterday.setUTCDate(yesterday.getUTCDate()-1);
+   streak=savedDay===dateKey(yesterday)?oldStreak+1:1;
+   localStorage.setItem('orbitSwitchLastDaily',today);localStorage.setItem('orbitSwitchStreak',String(streak));
+ }
+ const chip=mode==='daily'?`DAILY SCORE · ${today}`:'PRACTICE RUN';
+ $('resultChip').textContent=chip;
+ $('headline').innerHTML=score>=100?'Orbit<br>legend.':score>=40?'Nice<br>orbit!':'Orbit<br>over.';
+ $('message').textContent=`Score ${score} · ${sparks} spark${sparks===1?'':'s'} · ${duration}s survived. Personal best: ${best}.`+(mode==='daily'?` Daily streak: ${Math.max(streak,1)} day${Math.max(streak,1)===1?'':'s'}.`:'');
+ $('playBtn').textContent=mode==='daily'?'PLAY TODAY AGAIN':'TRY AGAIN';
+ $('practiceBtn').textContent=mode==='daily'?'PRACTICE MODE':'DAILY CHALLENGE';
+ $('shareBtn').style.display='inline-block';$('dailyNote').textContent=mode==='daily'?'Challenge complete. Share your score and invite someone to beat it.':'Practice run complete. Try today’s shared challenge.';
+ $('overlay').classList.remove('hidden');$('bottomHint').textContent='ONE MORE TRY?';
+ track('game_over',{score,sparks,duration,personal_best:best,streak:mode==='daily'?Number(localStorage.getItem('orbitSwitchStreak')||0):undefined});
+ if(score===best)track('personal_best',{score});
+ beep(130,.16)
+}
+function switchLane(){if(!running){if(!dead)start(mode);return}lane=1-lane;for(let i=0;i<5;i++){const rr=lane?r2:r1,a=angle+(Math.random()-.5)*.5;particles.push({x:cx+Math.cos(a)*rr,y:cy+Math.sin(a)*rr,vx:(Math.random()-.5)*100,vy:(Math.random()-.5)*100,life:.35,color:lane?'#ff5ebc':'#55e7ff'})}beep(lane?680:480,.035);draw()}
+function addObject(){const type=rng()<.26?'spark':'gate';let olane=rng()<.5?0:1;if(type==='spark')olane=rng()<.5?0:1;objects.push({a:angle+spawnAt,type,lane:olane,hit:false,spin:(rng()-.5)*.25});spawnAt+=Math.max(.72,1.28-elapsed*.004)+rng()*.28}
+function norm(a){while(a>Math.PI)a-=TAU;while(a< -Math.PI)a+=TAU;return a}
+function update(dt){elapsed+=dt;angle+=dt*(1.55+Math.min(elapsed*.018,.85));score=Math.floor(elapsed*10)+sparks*15;$('score').textContent=score;spawnAt-=dt*(1.55+Math.min(elapsed*.018,.85));while(spawnAt<1.3)addObject();for(const o of objects){o.a+=dt*o.spin;const delta=Math.abs(norm(o.a-angle));if(!o.hit&&delta<.105&&o.lane===lane){o.hit=true;if(o.type==='gate'){shake=9;for(let i=0;i<18;i++)particles.push({x:cx+Math.cos(angle)*(lane?r2:r1),y:cy+Math.sin(angle)*(lane?r2:r1),vx:(rng()-.5)*230,vy:(rng()-.5)*230,life:.6,color:'#ff5ebc'});finish();return}else{sparks++;$('sparks').textContent=sparks;beep(880,.07);for(let i=0;i<10;i++)particles.push({x:cx+Math.cos(angle)*(lane?r2:r1),y:cy+Math.sin(angle)*(lane?r2:r1),vx:(rng()-.5)*130,vy:(rng()-.5)*130,life:.5,color:'#ffd166'})}}}objects=objects.filter(o=>norm(o.a-angle)>-.2&&!o.hit);for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;p.vx*=.98;p.vy*=.98}particles=particles.filter(p=>p.life>0);shake=Math.max(0,shake-dt*35)}
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
+function draw(){if(!W||!H)return;ctx.clearRect(0,0,W,H);ctx.save();if(shake)ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);
+ for(let i=0;i<42;i++){let x=(i*97.13%W),y=(i*53.71%H);ctx.globalAlpha=.12+(i%4)*.06;ctx.fillStyle='#dceaff';ctx.beginPath();ctx.arc(x,y,i%7===0?1.4:.7,0,TAU);ctx.fill()}ctx.globalAlpha=1;
+ for(const [r,col] of [[r1,'#55e7ff'],[r2,'#ff5ebc']]){ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.strokeStyle=col+'33';ctx.lineWidth=1.5;ctx.setLineDash([3,9]);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();ctx.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+.55);ctx.strokeStyle=col+'55';ctx.lineWidth=3;ctx.stroke()}
+ const glow=ctx.createRadialGradient(cx,cy,2,cx,cy,r1*.7);glow.addColorStop(0,'#25365f');glow.addColorStop(1,'#101a32');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,r1*.62,0,TAU);ctx.fill();ctx.strokeStyle='#7186b333';ctx.lineWidth=1;ctx.stroke();ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#dce8ff';ctx.font='800 10px system-ui';ctx.fillText(running?'KEEP MOVING':'ORBIT SWITCH',cx,cy-6);ctx.fillStyle='#7588b2';ctx.font='10px system-ui';ctx.fillText(running?'SWITCH TO SURVIVE':'TAP TO BEGIN',cx,cy+11);
+ for(const o of objects){const rr=o.lane?r2:r1,x=cx+Math.cos(o.a)*rr,y=cy+Math.sin(o.a)*rr;if(o.type==='gate'){ctx.save();ctx.translate(x,y);ctx.rotate(o.a+Math.PI/2);ctx.shadowBlur=18;ctx.shadowColor='#ff5ebc';roundRect(-13,-5,26,10,5);ctx.fillStyle='#ff5ebc';ctx.fill();ctx.shadowBlur=0;roundRect(-9,-2,18,4,2);ctx.fillStyle='#ffe1f3';ctx.fill();ctx.restore()}else{ctx.save();ctx.shadowBlur=20;ctx.shadowColor='#ffd166';ctx.fillStyle='#ffd166';ctx.beginPath();ctx.arc(x,y,6,0,TAU);ctx.fill();ctx.strokeStyle='#fff0ba';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,10,0,TAU);ctx.stroke();ctx.restore()}}
+ const pr=lane?r2:r1,px=cx+Math.cos(angle)*pr,py=cy+Math.sin(angle)*pr;ctx.save();ctx.shadowBlur=24;ctx.shadowColor=lane?'#ff5ebc':'#55e7ff';ctx.fillStyle=lane?'#ff5ebc':'#55e7ff';ctx.beginPath();ctx.arc(px,py,9,0,TAU);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(px-2,py-2,2.7,0,TAU);ctx.fill();ctx.restore();
+ for(const p of particles){ctx.globalAlpha=Math.max(0,p.life*2);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,2.5,0,TAU);ctx.fill()}ctx.globalAlpha=1;ctx.restore()}
+function loop(t){if(!running)return;const dt=Math.min((t-last)/1000,.04);last=t;update(dt);draw();if(running)requestAnimationFrame(loop)}
+function beep(freq,duration){if(!sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.05,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
+async function shareResult(){const streak=Number(localStorage.getItem('orbitSwitchStreak')||0),text=`I scored ${score} in Orbit Switch ${mode==='daily'?'Daily Challenge':'Practice'}! ✨\nScore: ${score} · Sparks: ${sparks} · Best: ${best}${mode==='daily'?` · Streak: ${streak} day(s)`:''}\nCan you beat me?`;track('share_clicked',{score,mode});try{if(navigator.share){await navigator.share({title:'Orbit Switch',text,url:location.href});track('share_success',{method:'native'})}else if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(text+'\n'+location.href);$('shareBtn').textContent='COPIED!';track('share_success',{method:'clipboard'})}else{window.prompt('Copy your score:',text+'\n'+location.href)}}catch(e){if(e.name!=='AbortError')window.prompt('Copy your score:',text+'\n'+location.href)}}
+$('playBtn').addEventListener('click',e=>{e.stopPropagation();start(mode)});
+$('practiceBtn').addEventListener('click',e=>{e.stopPropagation();start(mode==='daily'?'practice':'daily')});
+$('shareBtn').addEventListener('click',e=>{e.stopPropagation();shareResult()});
+canvas.addEventListener('pointerdown',e=>{e.preventDefault();switchLane()});
+$('arena').addEventListener('pointerdown',e=>{if(e.target===arena&&!running)switchLane()});
+window.addEventListener('keydown',e=>{if(e.code==='Space'||e.code==='ArrowUp'||e.code==='ArrowDown'){e.preventDefault();if(!running){start(mode)}else switchLane()}});
+$('soundBtn').addEventListener('click',()=>{sound=!sound;$('soundBtn').textContent='SOUND: '+(sound?'ON':'OFF');if(sound)beep(540,.05)});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&running){running=false;track('game_paused',{reason:'tab_hidden'});$('headline').innerHTML='Paused';$('message').textContent='You left the game. Start a fresh run when you are ready.';$('playBtn').textContent='START NEW RUN';$('overlay').classList.remove('hidden')}});
+track('page_loaded',{});
+resize();
+})();
+</script></body></html>
